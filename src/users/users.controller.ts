@@ -19,6 +19,7 @@ export class UsersController {
                 message: 'User successfully created.',
                 user: userCreated
             }
+            
         }
         catch (err) {
             throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
