@@ -10,7 +10,7 @@ export class ExpensesController {
     @Post('/create')
     async create(@Body() newExpense: CreateExpenseDto) {
         try {
-            const expenseCreated = await this._expensesService.create(newExpense);
+            const expenseCreated = await this._expensesService.createExpense(newExpense);
 
             return {
                 message: 'Expense successfully created.',

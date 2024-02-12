@@ -10,9 +10,12 @@ import { User } from './entities/user.entity';
 @Module({
     imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
     controllers: [UsersController],
-    providers: [UsersService, {
-        provide: USERS_REPOSITORY,
-        useClass: MongoUsersRepository
-    }],
+    providers: [
+        UsersService,
+        {
+            provide: USERS_REPOSITORY,
+            useClass: MongoUsersRepository
+        }
+    ],
 })
 export class UsersModule { }

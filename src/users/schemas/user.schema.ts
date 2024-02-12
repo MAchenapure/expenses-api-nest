@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Schema as MongooseSchema } from "mongoose";
+import mongoose from "mongoose";
 import { Document, Model } from "mongoose";
 import { Expense } from "src/expenses/entities/expense.entity";
 
@@ -20,8 +20,8 @@ class User {
     @Prop({ required: true, type: Date, default: Date.now() })
     createdAt: Date;
 
-    @Prop([{ type: MongooseSchema.Types.ObjectId, ref: Expense.name }])
-    expenses: Expense;
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Expense' }] })
+    expenses: Expense[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

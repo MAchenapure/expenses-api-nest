@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Delete, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Param, Delete, HttpStatus, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user-dto';
@@ -9,6 +9,21 @@ import { User } from './entities/user.entity';
 export class UsersController {
     constructor(private readonly _usersService: UsersService) { }
 
+    @Get()
+    async findAll() {
+        try {
+            const users = await this._usersService.findAll();
+            
+            return {
+                message: 'User successfully created.',
+                user: users
+            }
+        }
+        catch (err) {
+            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+        }
+    }
+    
     @Post('/create')
     async create(@Body() createUserDto: CreateUserDto) {
         try {

@@ -5,7 +5,8 @@ import { User } from "../entities/user.entity";
 export const USERS_REPOSITORY = 'UsersRepository';
 
 export interface UsersRepository {
-    createUser(createUserDto: CreateUserDto): Promise <User>;
+    createUser(createUserDto: CreateUserDto): Promise<User>;
+    findAll(): Promise<User[]>;
     login(loginUserDto: LoginUserDto): Promise<User>;
-    deleteById(id: string): Promise<User>;
+    deleteUserById(id: string): Promise<User>;
 }

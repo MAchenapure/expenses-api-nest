@@ -16,6 +16,10 @@ export class UsersService {
         return await this._usersRepository.createUser(user);
     }
 
+    async findAll(): Promise<User[]> {
+        return await this._usersRepository.findAll();
+    }
+
     async login(loginUserDto: LoginUserDto): Promise<User> {
         let responseUser: User;
         const dbUser: User = await this._usersRepository.login(loginUserDto);
@@ -30,7 +34,7 @@ export class UsersService {
     }
 
     async deleteUserById(id: string) {
-        const deletedUser = await this._usersRepository.deleteById(id);
+        const deletedUser = await this._usersRepository.deleteUserById(id);
         return deletedUser;
     }
 }

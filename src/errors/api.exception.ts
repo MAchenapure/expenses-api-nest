@@ -9,9 +9,6 @@ export class ApiException extends HttpException {
 
         this.name = name;
         this.code = code;
-
-        console.log(`Name: ${name} - Code: ${code}`);
-        console.log(err);
     }
 
     public readonly name: string;

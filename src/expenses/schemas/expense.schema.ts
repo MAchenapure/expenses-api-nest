@@ -1,8 +1,11 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 
 @Schema()
 class Expense {
+    @Prop({ required: true })
+    description: string;
+
     @Prop({ required: true })
     value: number;
 
@@ -17,5 +20,5 @@ class Expense {
 }
 
 export const ExpenseSchema = SchemaFactory.createForClass(Expense);
-export type ExpenseDocument = Expense & Document;
+export type ExpenseDocument = Expense & mongoose.Document;
 export type ExpenseModel = Model<ExpenseDocument>;
