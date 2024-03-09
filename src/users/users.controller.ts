@@ -1,40 +1,35 @@
 import { Controller, Post, Body, Param, Delete, HttpStatus, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user-dto';
+import { CreateUserRequestDto } from './dto/create-user.request.dto';
+import { LoginUserRequestDto } from './dto/login-user-.requestdto';
 import { ApiException } from 'src/errors/api.exception';
 import { User } from './entities/user.entity';
+import { UserResponseDto } from './dto/user.response.dto';
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly _usersService: UsersService) { }
 
-    @Get()
-    async findAll() {
-        try {
-            const users = await this._usersService.findAll();
-            
-            return {
-                message: 'User successfully created.',
-                user: users
-            }
-        }
-        catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
-        }
-    }
-    
     @Post('/create')
-    async create(@Body() createUserDto: CreateUserDto) {
+    async create(@Body() createUserDto: CreateUserRequestDto): Promise<UserResponseDto> {
         try {
-            const userCreated = await this._usersService.createUser(createUserDto);
-            userCreated.password = undefined;
-
-            return {
-                message: 'User successfully created.',
-                user: userCreated
-            }
+            const user = await this._usersService.createUser(createUserDto);
             
+            if(user) {
+                user.password = undefined;
+
+                return {
+                    code: 0,
+                    message: 'User successfully created.',
+                    user: user
+                }
+            }
+            else {
+                return {
+                    code: 1,
+                    message: 'User already exists in database.'
+                }
+            }
         }
         catch (err) {
             throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
@@ -42,15 +37,23 @@ export class UsersController {
     }
 
     @Post('/login')
-    async login(@Body() loginUserDto: LoginUserDto) {
+    async login(@Body() loginUserDto: LoginUserRequestDto): Promise<UserResponseDto> {
         try {
             let user: User = await this._usersService.login(loginUserDto);
 
-            if (user) user.password = undefined;
-
-            return {
-                success: !!user,
-                user: user
+            if (user) {
+                user.password = undefined;
+                return {
+                    code: 0,
+                    message: 'Login successfully done.',
+                    user: user
+                }
+            }
+            else {
+                return {
+                    code: 1,
+                    message: 'Login failed.'
+                }
             }
         }
         catch (err) {
@@ -59,20 +62,23 @@ export class UsersController {
     }
 
     @Delete('delete/:id')
-    async remove(@Param('id') id: string) {
+    async remove(@Param('id') id: string): Promise<UserResponseDto> {
         try {
             const deletedUser = await this._usersService.deleteUserById(id);
 
-            if (!deletedUser) {
-                throw new ApiException("UserError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
+            if (deletedUser) {
+                deletedUser.password = undefined;
+                return {
+                    code: 0,
+                    message: 'User successfully deleted.',
+                    user: deletedUser
+                }
             }
             else {
-                deletedUser.password = undefined;
-            }
-
-            return {
-                message: 'User successfully deleted.',
-                user: deletedUser
+                return {
+                    code: 1,
+                    message: 'User not found.'
+                }
             }
         }
         catch (err) {

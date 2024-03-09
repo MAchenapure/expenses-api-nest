@@ -16,12 +16,12 @@ export class MongoExpensesRepository implements ExpensesRepository {
         @InjectModel(User.name) private readonly _usersModel: UserModel,
     ) { }
 
-    async createExpense({ userId, ...createExpenseDto }: CreateExpenseDto): Promise<Expense> {
-        this._validateMongoUserId(userId);
-        const findUser = await this._usersModel.findById(userId);
-        if (!findUser) throw new ApiException("UserError", "not-found", HttpStatus.NOT_FOUND);
+    async createExpense({ idUser, ...createExpenseDto }: CreateExpenseDto): Promise<Expense> {
+        this._validateMongoUserId(idUser);
+        const findedUser = await this._usersModel.findById(idUser);
+        if (!findedUser) throw new ApiException("UserError", "not-found", HttpStatus.NOT_FOUND);
         const newExpense = await new this._expensesModel(createExpenseDto).save();
-        await findUser.updateOne({
+        await findedUser.updateOne({
             $push: {
                 expenses: newExpense._id
             }
@@ -37,6 +37,15 @@ export class MongoExpensesRepository implements ExpensesRepository {
     findExpenseById(id: string): Promise<Expense> {
         throw new Error("Method not implemented.");
     }
+
+    async findUserExpenses(idUser: string): Promise<Expense[]> {
+        this._validateMongoUserId(idUser);
+        const findedUser = await this._usersModel.findById(idUser).populate('expenses');
+        if (!findedUser) throw new ApiException("UserError", "not-found", HttpStatus.NOT_FOUND);
+        const expenses: Expense[] = findedUser.expenses.map(expense => this._mapRawExpenseToExpense(expense));
+        return expenses;
+    }
+
     updateExpense(id: string, expense: CreateExpenseDto): Promise<Expense> {
         throw new Error("Method not implemented.");
     }

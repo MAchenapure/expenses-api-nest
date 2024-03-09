@@ -1,12 +1,12 @@
-import { CreateUserDto } from "../dto/create-user.dto";
-import { LoginUserDto } from "../dto/login-user-dto";
+import { CreateUserRequestDto } from "../dto/create-user.request.dto";
+import { LoginUserRequestDto } from "../dto/login-user-.requestdto";
 import { User } from "../entities/user.entity";
 
 export const USERS_REPOSITORY = 'UsersRepository';
 
 export interface UsersRepository {
-    createUser(createUserDto: CreateUserDto): Promise<User>;
+    createUser(createUserDto: CreateUserRequestDto): Promise<User>;
     findAll(): Promise<User[]>;
-    login(loginUserDto: LoginUserDto): Promise<User>;
+    login(loginUserDto: LoginUserRequestDto): Promise<User>;
     deleteUserById(id: string): Promise<User>;
 }

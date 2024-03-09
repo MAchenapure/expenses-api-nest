@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query } fr
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpensesService } from './expenses.service';
 import { ApiException } from 'src/errors/api.exception';
+import { Expense } from './entities/expense.entity';
 
 @Controller('expenses')
 export class ExpensesController {
@@ -39,34 +40,19 @@ export class ExpensesController {
         }
     }
 
-    @Get()
-    async findAll() {
+    @Get('/find')
+    async findUserExpenses(@Query('user') user: string): Promise<{ message: string, expenses: Expense[] }> {
         try {
-            const expenses = await this._expensesService.findAll();
+            const expenses = await this._expensesService.findUserExpenses(user);
 
             return {
-                message: 'OK.',
+                message: 'Query successfully executed.',
                 expenses: expenses
             }
+
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
-        }
-    }
-
-    @Get(':id')
-    async findById(@Param('id') id: string) {
-        try {
-            const expense = await this._expensesService.findById(id);
-
-            if (!expense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
-
-            return {
-                message: 'OK',
-                expense: expense
-            }
-        }
-        catch (err) {
+            console.log(err);
             throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
         }
     }
@@ -84,6 +70,40 @@ export class ExpensesController {
             }
         }
         catch (err) {
+            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+        }
+    }
+
+    @Get(':id')
+    async findById(@Param('id') id: string) {
+        try {
+            const expense = await this._expensesService.findById(id);
+
+            if (!expense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return {
+                message: 'Query successfully executed.',
+                expenses: expense
+            }
+        }
+        catch (err) {
+            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+        }
+    }
+
+    @Get()
+    async findAll() {
+        try {
+            console.log("ASDASDASDAS")
+            const expenses = await this._expensesService.findAll();
+
+            return {
+                message: 'Query successfully executed.',
+                expenses: expenses
+            }
+        }
+        catch (err) {
+            console.log(err)
             throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
         }
     }

@@ -1,25 +1,37 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { CreateUserDto } from "../dto/create-user.dto";
+import { CreateUserRequestDto } from "../dto/create-user.request.dto";
 import { UsersRepository } from "./users.repository";
-import { LoginUserDto } from "../dto/login-user-dto";
+import { LoginUserRequestDto } from "../dto/login-user-.requestdto";
 import { User } from "../entities/user.entity";
 import { InjectModel } from "@nestjs/mongoose";
 import { UserDocument, UserModel } from "../schemas/user.schema";
 import mongoose from "mongoose";
-import { ApiException } from "src/errors/api.exception";
 
 @Injectable()
 export class MongoUsersRepository implements UsersRepository {
     constructor(@InjectModel(User.name) private readonly _userModel: UserModel) { }
 
-    async createUser(createUserDto: CreateUserDto): Promise<User> {
-        const user = await new this._userModel(createUserDto).save();
+    async createUser(createUserDto: CreateUserRequestDto): Promise<User> {
+        let user = await this._userModel.findOne({ email: createUserDto.email });
+        
+        // Returns null if an user with that email already exists in the database.
+        if(user)
+            return null;
+
+        user = await new this._userModel(createUserDto).save();
         return this._mapRawUserToUser(user);
     }
 
     async deleteUserById(id: string): Promise<User> {
-        this._validateMongoId(id);
-        const user = await this._userModel.findByIdAndDelete(id);
+        if (!this._validateMongoId(id))
+            return null;
+
+        const user = await this._userModel.findOne({ _id: id });
+
+        if (!user)
+            return null;
+
+        await this._userModel.deleteOne({ _id: user.id });
         return this._mapRawUserToUser(user);
     }
 
@@ -27,9 +39,13 @@ export class MongoUsersRepository implements UsersRepository {
         return await this._userModel.find().populate('expenses');
     }
 
-    async login(loginUserDto: LoginUserDto): Promise<User> {
+    async login(loginUserDto: LoginUserRequestDto): Promise<User> {
         const user = await this._userModel.findOne({ email: loginUserDto.email });
-        return this._mapRawUserToUser(user);
+
+        if (user)
+            return this._mapRawUserToUser(user);
+        else
+            return null;
     }
 
     private _mapRawUserToUser(rawUser: UserDocument): User {
@@ -45,10 +61,7 @@ export class MongoUsersRepository implements UsersRepository {
         return user;
     }
 
-    private _validateMongoId(id: string) {
-        const isValid = mongoose.Types.ObjectId.isValid(id);
-
-        if (!isValid)
-            throw new ApiException("UserError", "not-found", HttpStatus.NOT_FOUND);
+    private _validateMongoId(id: string): boolean {
+        return mongoose.Types.ObjectId.isValid(id);
     }
 }

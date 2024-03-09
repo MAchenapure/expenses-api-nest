@@ -8,8 +8,7 @@ export class ExpensesService {
     constructor(@Inject(EXPENSES_REPOSITORY) private readonly _expensesRepository: ExpensesRepository) { }
 
     createExpense = async (createExpenseDto: CreateExpenseDto): Promise<Expense> => {
-        const newExpense = await this._expensesRepository.createExpense(createExpenseDto);
-        return newExpense;
+        return await this._expensesRepository.createExpense(createExpenseDto);
     }
 
     deleteById = async (expenseId: string): Promise<Expense> => {
@@ -29,6 +28,10 @@ export class ExpensesService {
 
         // const expense = await this.expenseModel.findById(expenseId);
         // return expense;
+    }
+
+    findUserExpenses = async (idUser: string): Promise<Expense[]> => {
+        return await this._expensesRepository.findUserExpenses(idUser);
     }
 
     udpate = async (expenseId: string, expense: CreateExpenseDto): Promise<Expense> => {

@@ -4,7 +4,7 @@ import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from "c
 export class CreateExpenseDto {
     @IsNotEmpty()
     @IsString()
-    readonly userId: string;
+    readonly idUser: string;
 
     @IsNotEmpty()
     @IsString()

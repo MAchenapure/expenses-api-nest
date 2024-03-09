@@ -17,4 +17,10 @@ describe('UsersController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  // describe('login', () => {
+  //   it('should login successfully', async () => {
+  //     const response = await controller.login({email: 'machenapure@gmail.com', password: 'asd123'});
+  //   })
+  // });
 });
