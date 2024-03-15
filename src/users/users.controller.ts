@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Param, Delete, HttpStatus, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserRequestDto } from './dto/create-user.request.dto';
-import { LoginUserRequestDto } from './dto/login-user-.requestdto';
+import { CreateUserRequestDto } from './dto/create.user.request.dto';
+import { LoginUserRequestDto } from './dto/login.user.request.dto';
 import { ApiException } from 'src/errors/api.exception';
 import { User } from './entities/user.entity';
 import { UserResponseDto } from './dto/user.response.dto';
@@ -20,14 +20,14 @@ export class UsersController {
 
                 return {
                     code: 0,
-                    message: 'User successfully created.',
+                    message: 'User created successfully.',
                     user: user
                 }
             }
             else {
                 return {
                     code: 1,
-                    message: 'User already exists in database.'
+                    message: 'User already exists.'
                 }
             }
         }
@@ -70,7 +70,7 @@ export class UsersController {
                 deletedUser.password = undefined;
                 return {
                     code: 0,
-                    message: 'User successfully deleted.',
+                    message: 'User deleted successfully.',
                     user: deletedUser
                 }
             }

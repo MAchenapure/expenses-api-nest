@@ -1,7 +1,7 @@
-import { HttpStatus, Injectable } from "@nestjs/common";
-import { CreateUserRequestDto } from "../dto/create-user.request.dto";
-import { UsersRepository } from "./users.repository";
-import { LoginUserRequestDto } from "../dto/login-user-.requestdto";
+import { Injectable } from "@nestjs/common";
+import { CreateUserRequestDto } from "../dto/create.user.request.dto";
+import { UsersRepository } from "./users.repository.interface";
+import { LoginUserRequestDto } from "../dto/login.user.request.dto";
 import { User } from "../entities/user.entity";
 import { InjectModel } from "@nestjs/mongoose";
 import { UserDocument, UserModel } from "../schemas/user.schema";

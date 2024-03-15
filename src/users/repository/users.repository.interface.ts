@@ -1,5 +1,5 @@
-import { CreateUserRequestDto } from "../dto/create-user.request.dto";
-import { LoginUserRequestDto } from "../dto/login-user-.requestdto";
+import { CreateUserRequestDto } from "../dto/create.user.request.dto";
+import { LoginUserRequestDto } from "../dto/login.user.request.dto";
 import { User } from "../entities/user.entity";
 
 export const USERS_REPOSITORY = 'UsersRepository';
