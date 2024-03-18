@@ -1,7 +1,17 @@
 version: '3.4'
 
-mongo:
-  container_name: mongodb-expenses
-  image: 'mongo'
-  ports:
-    - '27017:27017'
+services:
+  mongo:
+    container_name: expenses-mongodb
+    image: 'mongo:latest'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=expensesadmin01!
+      - MONGO_INITDB_DATABASE=expenses-db
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo:/data/db
+
+volumes: 
+  mongo:
