@@ -1,15 +1,16 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthUserRequestDto } from './dto/create.auth.user.request.dto';
-import { AuthUser } from './entities/auth.user';
 import { CreateAuthUserResponseDto } from './dto/create.auth.user.response.dto';
 import { ApiException } from 'src/errors/api.exception';
 import { AuthenticateRequestDto } from './dto/authenticate.request.dto';
+import { PublicRoute } from './decorators/auth.public.decorator';
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly _authService: AuthService) { }
 
+    @PublicRoute()
     @Post('/')
     async authenticate(@Body() authenticateDto: AuthenticateRequestDto) {
         try {
@@ -18,13 +19,14 @@ export class AuthController {
             if (authentication) {
                 return {
                     code: 0,
-                    message: 'Auth OK.'
+                    message: 'Auth successfull',
+                    auth: authentication
                 }
             }
             else {
                 return {
                     code: 1,
-                    message: 'Auth NOK.'
+                    message: 'Auth wrong'
                 }
             }
         }

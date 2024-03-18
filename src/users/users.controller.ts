@@ -5,6 +5,7 @@ import { LoginUserRequestDto } from './dto/login.user.request.dto';
 import { ApiException } from 'src/errors/api.exception';
 import { User } from './entities/user.entity';
 import { UserResponseDto } from './dto/user.response.dto';
+import { PublicRoute } from 'src/auth/decorators/auth.public.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -14,8 +15,8 @@ export class UsersController {
     async create(@Body() createUserDto: CreateUserRequestDto): Promise<UserResponseDto> {
         try {
             const user = await this._usersService.createUser(createUserDto);
-            
-            if(user) {
+
+            if (user) {
                 user.password = undefined;
 
                 return {

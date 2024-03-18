@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
     constructor(
         @Inject(AUTH_USERS_REPOSITORY) private readonly _authUserRepository: AuthUsersRepository,
-        @Inject() private jwtService: JwtService
+        private _jwtService: JwtService
     ) { }
 
     async authenticate(authenticateDto: AuthenticateRequestDto): Promise<{ access_token: string }> {
@@ -19,11 +19,14 @@ export class AuthService {
         if (!dbAuthUser)
             return null;
 
-        //return await compare(authenticateDto.password, dbAuthUser.password);
+        const passValidation = await compare(authenticateDto.password, dbAuthUser.password);
+
+        if(!passValidation)
+            return null;
 
         const payload = { sub: dbAuthUser.id, username: dbAuthUser.username };
         return {
-            access_token: await this.jwtService.signAsync(payload),
+            access_token: await this._jwtService.signAsync(payload),
         };
     }
 
