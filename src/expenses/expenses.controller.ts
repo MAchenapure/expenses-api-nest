@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpensesService } from './expenses.service';
-import { ApiException } from 'src/errors/api.exception';
 import { Expense } from './entities/expense.entity';
 
 @Controller('expenses')
@@ -19,7 +18,7 @@ export class ExpensesController {
             }
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -28,7 +27,8 @@ export class ExpensesController {
         try {
             const deletedExpense = await this._expensesService.deleteById(id);
 
-            if (!deletedExpense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
+            // ToDo - Devolver código de error de negocio.
+            // if (!deletedExpense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
 
             return {
                 message: 'Expense successfully deleted.',
@@ -36,7 +36,7 @@ export class ExpensesController {
             };
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -52,8 +52,7 @@ export class ExpensesController {
 
         }
         catch (err) {
-            console.log(err);
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -62,7 +61,8 @@ export class ExpensesController {
         try {
             const updatedExpense = await this._expensesService.udpate(expenseId, expense);
 
-            if (!updatedExpense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
+            // ToDo - Devolver código de error de negocio.
+            // if (!updatedExpense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
 
             return {
                 message: 'Expense successfully updated.',
@@ -70,7 +70,7 @@ export class ExpensesController {
             }
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -79,7 +79,8 @@ export class ExpensesController {
         try {
             const expense = await this._expensesService.findById(id);
 
-            if (!expense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
+            // ToDo - Devolver código de error de negocio.
+            // if (!expense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
 
             return {
                 message: 'Query successfully executed.',
@@ -87,14 +88,13 @@ export class ExpensesController {
             }
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 
     @Get()
     async findAll() {
         try {
-            console.log("ASDASDASDAS")
             const expenses = await this._expensesService.findAll();
 
             return {
@@ -103,8 +103,7 @@ export class ExpensesController {
             }
         }
         catch (err) {
-            console.log(err)
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 }

@@ -2,7 +2,7 @@ import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthUserRequestDto } from './dto/create.auth.user.request.dto';
 import { CreateAuthUserResponseDto } from './dto/create.auth.user.response.dto';
-import { ApiException } from 'src/errors/api.exception';
+import { ApiException } from '../errors/api.exception';
 import { AuthenticateRequestDto } from './dto/authenticate.request.dto';
 import { PublicRoute } from './decorators/auth.public.decorator';
 
@@ -35,7 +35,7 @@ export class AuthController {
         }
     }
 
-    @Post('/user/create')
+    @Post('/create')
     async create(@Body() createAuthUserDto: CreateAuthUserRequestDto): Promise<CreateAuthUserResponseDto> {
         try {
             const authUser = await this._authService.createAuthUser(createAuthUserDto);

@@ -1,4 +1,4 @@
-import { Expense } from "src/expenses/entities/expense.entity";
+import { Expense } from "../../expenses/entities/expense.entity";
 
 export class User {
     id: string;

@@ -4,8 +4,8 @@ import { ExpensesService } from './expenses.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ExpenseSchema } from './schemas/expense.schema';
 import { Expense } from './entities/expense.entity';
-import { UserSchema } from 'src/users/schemas/user.schema';
-import { User } from 'src/users/entities/user.entity';
+import { UserSchema } from '../users/schemas/user.schema';
+import { User } from '../users/entities/user.entity';
 import { EXPENSES_REPOSITORY } from './repository/expenses.repository';
 import { MongoExpensesRepository } from './repository/expenses.repository.mongo';
 

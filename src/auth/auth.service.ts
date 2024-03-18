@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateAuthUserRequestDto } from 'src/auth/dto/create.auth.user.request.dto';
-import { AuthUser } from 'src/auth/entities/auth.user';
+import { CreateAuthUserRequestDto } from '../auth/dto/create.auth.user.request.dto';
+import { AuthUser } from '../auth/entities/auth.user';
 import { AUTH_USERS_REPOSITORY, AuthUsersRepository } from './repository/auth.users.repository.interface';
-import { compare, hash } from 'src/service/hash.service';
+import { compare, hash } from '../service/hash.service';
 import { AuthenticateRequestDto } from './dto/authenticate.request.dto';
 import { JwtService } from '@nestjs/jwt';
 

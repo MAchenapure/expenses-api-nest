@@ -5,9 +5,9 @@ import { Expense } from "../entities/expense.entity";
 import { InjectModel } from "@nestjs/mongoose";
 import { ExpenseDocument, ExpenseModel } from "../schemas/expense.schema";
 import mongoose, { Model } from "mongoose";
-import { ApiException } from "src/errors/api.exception";
-import { UserModel } from "src/users/schemas/user.schema";
-import { User } from "src/users/entities/user.entity";
+import { ApiException } from "../../errors/api.exception";
+import { UserModel } from "../..//users/schemas/user.schema";
+import { User } from "../../users/entities/user.entity";
 
 @Injectable()
 export class MongoExpensesRepository implements ExpensesRepository {

@@ -1,11 +1,9 @@
-import { Controller, Post, Body, Param, Delete, HttpStatus, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Delete, HttpStatus, Get, InternalServerErrorException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserRequestDto } from './dto/create.user.request.dto';
 import { LoginUserRequestDto } from './dto/login.user.request.dto';
-import { ApiException } from 'src/errors/api.exception';
 import { User } from './entities/user.entity';
 import { UserResponseDto } from './dto/user.response.dto';
-import { PublicRoute } from 'src/auth/decorators/auth.public.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -18,7 +16,6 @@ export class UsersController {
 
             if (user) {
                 user.password = undefined;
-
                 return {
                     code: 0,
                     message: 'User created successfully.',
@@ -33,7 +30,7 @@ export class UsersController {
             }
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -58,7 +55,7 @@ export class UsersController {
             }
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 
@@ -83,7 +80,7 @@ export class UsersController {
             }
         }
         catch (err) {
-            throw new ApiException(err.name, err.code, HttpStatus.INTERNAL_SERVER_ERROR, err);
+            throw new InternalServerErrorException();
         }
     }
 }
