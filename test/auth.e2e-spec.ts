@@ -6,7 +6,7 @@ import { AppModule } from './../src/app.module';
 describe('AuthController (e2e)', () => {
     let app: INestApplication;
     const AUTH_URL = '/auth';
-    let token = '';
+    let authToken = '';
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -17,7 +17,7 @@ describe('AuthController (e2e)', () => {
         await app.init();
     })
 
-    describe('Authentication', () => {
+    describe('Authentication (GET) /auth', () => {
         it('should auth.', async () => {
             const response = await request(app.getHttpServer())
                 .post(AUTH_URL)
@@ -31,15 +31,15 @@ describe('AuthController (e2e)', () => {
             expect(response.body.auth).toBeDefined();
             expect(response.body.auth.access_token).toBeDefined();
 
-            token = response.body.auth.access_token;
+            authToken = response.body.auth.access_token;
         });
     })
 
-    describe('Create authentication user', () => {
+    describe('Create authentication user (POST) /auth/create', () => {
         it('should return 201 but response.code = 1 when already exists an user with that email.', async () => {
             const response = await request(app.getHttpServer())
                 .post(AUTH_URL + '/create')
-                .auth(token, { type: 'bearer' })
+                .auth(authToken, { type: 'bearer' })
                 .send({
                     username: "admin",
                     password: "admin1234"
@@ -49,7 +49,7 @@ describe('AuthController (e2e)', () => {
             expect(response.body.code).toEqual(1);
         })
 
-        it('should return 401 auth token is not sent.', async () => {
+        it('should return 401 when auth token is not provided.', async () => {
             const response = await request(app.getHttpServer())
             .post(AUTH_URL + '/create')
             .send({
