@@ -9,10 +9,22 @@ import { hash, compare } from '../services/hash.service'
 export class UsersService {
     constructor(@Inject(USERS_REPOSITORY) private readonly _usersRepository: UsersRepository) { }
 
-    async createUser(user: CreateUserRequestDto): Promise<User> {
-        const password = await hash(user.password);
-        user.password = password;
-        return await this._usersRepository.createUser(user);
+    async createUser(userDto: CreateUserRequestDto): Promise<User> {
+        const password = await hash(userDto.password);
+        userDto.password = password;
+        const user = await this._usersRepository.createUser(userDto);
+        if (!user)
+            throw new InternalServerErrorException("An error ocurred while trying to create the user.")
+
+        return user;
+    }
+
+    async deleteUserById(id: string): Promise<User> {
+        const deletedUser = await this._usersRepository.deleteUserById(id);
+        if (!deletedUser)
+            throw new BadRequestException("User not found.");
+
+        return deletedUser;
     }
 
     async findById(id: string): Promise<User> {
@@ -23,20 +35,14 @@ export class UsersService {
     }
 
     async login(loginUserDto: LoginUserRequestDto): Promise<User> {
-        const dbUser: User = await this._usersRepository.login(loginUserDto);
+        const dbUser: User = await this._usersRepository.findByEmail(loginUserDto.email);
+        if (!dbUser)
+            throw new BadRequestException("Login failed.");
 
-        if (dbUser) {
-            const result = await compare(loginUserDto.password, dbUser.password);
+        const passComparison = await compare(loginUserDto.password, dbUser.password);
+        if (!passComparison)
+            throw new BadRequestException("Login failed.");
 
-            if (result)
-                return dbUser;
-        }
-
-        return null;
-    }
-
-    async deleteUserById(id: string): Promise<User> {
-        const deletedUser = await this._usersRepository.deleteUserById(id);
-        return deletedUser;
+        return dbUser;
     }
 }

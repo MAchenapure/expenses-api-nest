@@ -1,7 +1,6 @@
-import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpensesService } from './expenses.service';
-import { Expense } from './entities/expense.entity';
 import { ExpenseResponseDto } from './dto/expense.response.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 

@@ -49,7 +49,7 @@ describe('UsersController (e2e)', () => {
                 .expect(401);
         });
 
-        it('should create a new user and return 201 with response.code = 0', async () => {
+        it('should create a new user and return 201', async () => {
             const response = await request(app.getHttpServer())
                 .post(CREATE_USER_URL)
                 .auth(authToken, { type: 'bearer' })
@@ -61,13 +61,12 @@ describe('UsersController (e2e)', () => {
                 })
                 .expect(201)
 
-            expect(response.body.code).toEqual(0);
             expect(response.body.user).toBeDefined();
             idUser = response.body.user.id;
         });
 
-        it('should return 201 but response.code = 1 when already exists an user with that email', async () => {
-            const response = await request(app.getHttpServer())
+        it('should return 400 when already exists an user with that email', async () => {
+            return await request(app.getHttpServer())
                 .post(CREATE_USER_URL)
                 .auth(authToken, { type: 'bearer' })
                 .send({
@@ -76,9 +75,7 @@ describe('UsersController (e2e)', () => {
                     name: 'John',
                     lastname: 'Doe'
                 })
-                .expect(201)
-
-            expect(response.body.code).toEqual(1);
+                .expect(400)
         });
     });
 
@@ -95,7 +92,7 @@ describe('UsersController (e2e)', () => {
                 .expect(401);
         });
 
-        it('should login', async () => {
+        it('should return 201 and login', async () => {
             const response = await request(app.getHttpServer())
                 .post(LOGIN_USER_URL)
                 .auth(authToken, { type: 'bearer' })
@@ -105,34 +102,29 @@ describe('UsersController (e2e)', () => {
                 })
                 .expect(201);
 
-            expect(response.body.code).toEqual(0);
             expect(response.body.user).toBeDefined();
         })
 
-        it('should return 201 but response.code = 1 when user is wrong.', async () => {
-            const response = await request(app.getHttpServer())
+        it('should return 400 when user is wrong.', async () => {
+            return await request(app.getHttpServer())
                 .post(LOGIN_USER_URL)
                 .auth(authToken, { type: 'bearer' })
                 .send({
                     email: 'testemail1@gmail.com',
                     password: 'testpassword123'
                 })
-                .expect(201);
-
-            expect(response.body.code).toEqual(1);
+                .expect(400);
         })
 
-        it('should return 201 but response.code = 1 when password is wrong.', async () => {
-            const response = await request(app.getHttpServer())
+        it('should return 400 when password is wrong.', async () => {
+            return await request(app.getHttpServer())
                 .post(LOGIN_USER_URL)
                 .auth(authToken, { type: 'bearer' })
                 .send({
                     email: 'testemail@gmail.com',
                     password: 'testpassword1234'
                 })
-                .expect(201);
-
-            expect(response.body.code).toEqual(1);
+                .expect(400);
         })
     })
 
@@ -151,17 +143,14 @@ describe('UsersController (e2e)', () => {
                 .auth(authToken, { type: 'bearer' })
                 .expect(200);
 
-            expect(response.body.code).toEqual(0);
             expect(response.body.user).toBeDefined();
         });
 
-        it('should return 200 but response.code = 1 when trying to delete an unexisting user.', async () => {
-            const response = await request(app.getHttpServer())
+        it('should return 400 when trying to delete an unexisting user.', async () => {
+            return await request(app.getHttpServer())
                 .delete(`${DELETE_USER_URL}/${idUser}`)
                 .auth(authToken, { type: 'bearer' })
-                .expect(200);
-
-            expect(response.body.code).toEqual(1);
+                .expect(400);
         });
 
     })

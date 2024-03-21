@@ -8,7 +8,7 @@ import { UserSchema } from '../users/schemas/user.schema';
 import { User } from '../users/entities/user.entity';
 import { EXPENSES_REPOSITORY } from './repository/expenses.repository.interface';
 import { MongoExpensesRepository } from './repository/expenses.repository.mongo';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
     imports: [

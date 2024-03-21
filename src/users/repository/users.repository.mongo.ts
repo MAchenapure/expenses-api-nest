@@ -13,21 +13,20 @@ export class MongoUsersRepository implements UsersRepository {
 
     async createUser(createUserDto: CreateUserRequestDto): Promise<User> {
         let user = await this._userModel.findOne({ email: createUserDto.email });
-
-        // Returns null if an user with that email already exists in the database.
         if (user)
-            return null;
+            throw new BadRequestException("There is already a registered user with that email address.");
 
         user = await new this._userModel(createUserDto).save();
+        if (!user)
+            return null;
+
         return this._mapRawUserToUser(user);
     }
 
     async deleteUserById(id: string): Promise<User> {
-        if (!this._validateMongoId(id))
-            return null;
+        this._validateMongoId(id);
 
         const user = await this._userModel.findOne({ _id: id });
-
         if (!user)
             return null;
 
@@ -39,6 +38,14 @@ export class MongoUsersRepository implements UsersRepository {
         return await this._userModel.find();
     }
 
+    async findByEmail(email: string): Promise<User> {
+        const user = await this._userModel.findOne({ email: email });
+        if (!user)
+            return null;
+
+        return this._mapRawUserToUser(user);
+    }
+
     async findById(id: string): Promise<User> {
         this._validateMongoId(id);
 
@@ -47,15 +54,6 @@ export class MongoUsersRepository implements UsersRepository {
             return null;
 
         return this._mapRawUserToUser(user);
-    }
-
-    async login(loginUserDto: LoginUserRequestDto): Promise<User> {
-        const user = await this._userModel.findOne({ email: loginUserDto.email });
-
-        if (user)
-            return this._mapRawUserToUser(user);
-        else
-            return null;
     }
 
     private _mapRawUserToUser(rawUser: UserDocument): User {

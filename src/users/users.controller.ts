@@ -12,50 +12,30 @@ export class UsersController {
     @Post('/create')
     async create(@Body() createUserDto: CreateUserRequestDto): Promise<UserResponseDto> {
         try {
-            const user = await this._usersService.createUser(createUserDto);
-
-            if (user) {
-                user.password = undefined;
-                return {
-                    code: 0,
-                    message: 'User created successfully.',
-                    user: user
-                }
-            }
-            else {
-                return {
-                    code: 1,
-                    message: 'User already exists.'
-                }
+            const user: User = await this._usersService.createUser(createUserDto);
+            user.password = undefined;
+            return {
+                message: 'User created successfully.',
+                user: user
             }
         }
         catch (err) {
-            throw new InternalServerErrorException();
+            throw err;
         }
     }
 
     @Post('/login')
     async login(@Body() loginUserDto: LoginUserRequestDto): Promise<UserResponseDto> {
         try {
-            let user: User = await this._usersService.login(loginUserDto);
-
-            if (user) {
-                user.password = undefined;
-                return {
-                    code: 0,
-                    message: 'Login successfully done.',
-                    user: user
-                }
-            }
-            else {
-                return {
-                    code: 1,
-                    message: 'Login failed.'
-                }
+            const user: User = await this._usersService.login(loginUserDto);
+            user.password = undefined;
+            return {
+                message: 'Login successfully done.',
+                user: user
             }
         }
         catch (err) {
-            throw new InternalServerErrorException();
+            throw err;
         }
     }
 
@@ -63,24 +43,14 @@ export class UsersController {
     async remove(@Param('id') id: string): Promise<UserResponseDto> {
         try {
             const deletedUser = await this._usersService.deleteUserById(id);
-
-            if (deletedUser) {
-                deletedUser.password = undefined;
-                return {
-                    code: 0,
-                    message: 'User deleted successfully.',
-                    user: deletedUser
-                }
-            }
-            else {
-                return {
-                    code: 1,
-                    message: 'User not found.'
-                }
+            deletedUser.password = undefined;
+            return {
+                message: 'User deleted successfully.',
+                user: deletedUser
             }
         }
         catch (err) {
-            throw new InternalServerErrorException();
+            throw err;
         }
     }
 }
