@@ -1,4 +1,4 @@
 export abstract class BaseResponseDto {
-    code: number;
+    code?: number;
     message: string;
 }

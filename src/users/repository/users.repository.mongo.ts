@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { CreateUserRequestDto } from "../dto/create.user.request.dto";
 import { UsersRepository } from "./users.repository.interface";
 import { LoginUserRequestDto } from "../dto/login.user.request.dto";
@@ -13,9 +13,9 @@ export class MongoUsersRepository implements UsersRepository {
 
     async createUser(createUserDto: CreateUserRequestDto): Promise<User> {
         let user = await this._userModel.findOne({ email: createUserDto.email });
-        
+
         // Returns null if an user with that email already exists in the database.
-        if(user)
+        if (user)
             return null;
 
         user = await new this._userModel(createUserDto).save();
@@ -36,7 +36,17 @@ export class MongoUsersRepository implements UsersRepository {
     }
 
     async findAll(): Promise<User[]> {
-        return await this._userModel.find().populate('expenses');
+        return await this._userModel.find();
+    }
+
+    async findById(id: string): Promise<User> {
+        this._validateMongoId(id);
+
+        const user = await this._userModel.findOne({ _id: id });
+        if (!user)
+            return null;
+
+        return this._mapRawUserToUser(user);
     }
 
     async login(loginUserDto: LoginUserRequestDto): Promise<User> {
@@ -62,6 +72,9 @@ export class MongoUsersRepository implements UsersRepository {
     }
 
     private _validateMongoId(id: string): boolean {
-        return mongoose.Types.ObjectId.isValid(id);
+        if (!mongoose.Types.ObjectId.isValid(id))
+            throw new BadRequestException("Invalid User ID.");
+
+        return true;
     }
 }

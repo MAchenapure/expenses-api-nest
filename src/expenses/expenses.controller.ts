@@ -2,23 +2,54 @@ import { Body, Controller, Delete, Get, HttpStatus, InternalServerErrorException
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpensesService } from './expenses.service';
 import { Expense } from './entities/expense.entity';
+import { ExpenseResponseDto } from './dto/expense.response.dto';
+import { UpdateExpenseDto } from './dto/update-expense.dto';
 
 @Controller('expenses')
 export class ExpensesController {
     constructor(private readonly _expensesService: ExpensesService) { }
 
     @Post('/create')
-    async create(@Body() newExpense: CreateExpenseDto) {
+    async create(@Body() createExpenseDto: CreateExpenseDto): Promise<ExpenseResponseDto> {
         try {
-            const expenseCreated = await this._expensesService.createExpense(newExpense);
-
+            const expenseCreated = await this._expensesService.createExpense(createExpenseDto);
             return {
-                message: 'Expense successfully created.',
+                message: 'Expense successfully registered.',
                 expense: expenseCreated
             }
         }
         catch (err) {
-            throw new InternalServerErrorException();
+            throw err;
+        }
+    }
+
+    @Get('/user/:id')
+    async getUserExpenses(@Param('id') idUser: string): Promise<ExpenseResponseDto> {
+        try {
+            const expenses = await this._expensesService.findUserExpenses(idUser);
+
+            return {
+                message: 'Query successfully executed.',
+                expense: expenses
+            }
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+
+    @Get('/get/:id')
+    async getById(@Param('id') idExpense: string): Promise<ExpenseResponseDto> {
+        try {
+            const expense = await this._expensesService.findById(idExpense);
+
+            return {
+                message: 'Query successfully executed.',
+                expense: expense
+            }
+        }
+        catch (err) {
+            throw err;
         }
     }
 
@@ -27,42 +58,20 @@ export class ExpensesController {
         try {
             const deletedExpense = await this._expensesService.deleteById(id);
 
-            // ToDo - Devolver código de error de negocio.
-            // if (!deletedExpense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
-
             return {
                 message: 'Expense successfully deleted.',
                 expense: deletedExpense
             };
         }
         catch (err) {
-            throw new InternalServerErrorException();
+            throw err;
         }
     }
 
-    @Get('/find')
-    async findUserExpenses(@Query('user') user: string): Promise<{ message: string, expenses: Expense[] }> {
+    @Put('/update/:id')
+    async update(@Body() expense: UpdateExpenseDto, @Param('id') idExpense) {
         try {
-            const expenses = await this._expensesService.findUserExpenses(user);
-
-            return {
-                message: 'Query successfully executed.',
-                expenses: expenses
-            }
-
-        }
-        catch (err) {
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Put('/update')
-    async update(@Body() expense: CreateExpenseDto, @Query('expenseId') expenseId) {
-        try {
-            const updatedExpense = await this._expensesService.udpate(expenseId, expense);
-
-            // ToDo - Devolver código de error de negocio.
-            // if (!updatedExpense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
+            const updatedExpense = await this._expensesService.updateExpense(idExpense, expense);
 
             return {
                 message: 'Expense successfully updated.',
@@ -70,40 +79,7 @@ export class ExpensesController {
             }
         }
         catch (err) {
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Get(':id')
-    async findById(@Param('id') id: string) {
-        try {
-            const expense = await this._expensesService.findById(id);
-
-            // ToDo - Devolver código de error de negocio.
-            // if (!expense) throw new ApiException("ExpenseError", "not-found", HttpStatus.INTERNAL_SERVER_ERROR);
-
-            return {
-                message: 'Query successfully executed.',
-                expenses: expense
-            }
-        }
-        catch (err) {
-            throw new InternalServerErrorException();
-        }
-    }
-
-    @Get()
-    async findAll() {
-        try {
-            const expenses = await this._expensesService.findAll();
-
-            return {
-                message: 'Query successfully executed.',
-                expenses: expenses
-            }
-        }
-        catch (err) {
-            throw new InternalServerErrorException();
+            throw err;
         }
     }
 }

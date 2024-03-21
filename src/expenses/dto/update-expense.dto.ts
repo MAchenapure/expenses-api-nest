@@ -1,16 +1,12 @@
 import { Type } from "class-transformer";
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLength, MinLength } from "class-validator";
+import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLength } from "class-validator";
 
-export class CreateExpenseDto {
-    @IsNotEmpty()
-    @IsString()
-    readonly idUser: string;
-
+export class UpdateExpenseDto {
     @IsNotEmpty()
     @IsString()
     @MaxLength(150)
     readonly description: string;
-    
+
     @IsNotEmpty()
     @IsNumber()
     @IsPositive()

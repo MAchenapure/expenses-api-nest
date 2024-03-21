@@ -1,5 +1,3 @@
-import { Expense } from "../../expenses/entities/expense.entity";
-
 export class User {
     id: string;
     email: string;
@@ -7,5 +5,4 @@ export class User {
     name: string;
     lastname: string;
     createdAt: Date;
-    expenses: Expense[];
 }

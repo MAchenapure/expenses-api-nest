@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserRequestDto } from './dto/create.user.request.dto';
 import { LoginUserRequestDto } from './dto/login.user.request.dto';
 import { User } from './entities/user.entity';
 import { USERS_REPOSITORY, UsersRepository } from './repository/users.repository.interface';
-import { hash, compare } from '../service/hash.service'
+import { hash, compare } from '../services/hash.service'
 
 @Injectable()
 export class UsersService {
@@ -13,6 +13,13 @@ export class UsersService {
         const password = await hash(user.password);
         user.password = password;
         return await this._usersRepository.createUser(user);
+    }
+
+    async findById(id: string): Promise<User> {
+        const user = await this._usersRepository.findById(id);
+        if (!user)
+            throw new BadRequestException("Invalid User ID.");
+        return user;
     }
 
     async login(loginUserDto: LoginUserRequestDto): Promise<User> {

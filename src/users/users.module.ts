@@ -17,5 +17,6 @@ import { User } from './entities/user.entity';
             useClass: MongoUsersRepository
         }
     ],
+    exports: [UsersService]
 })
 export class UsersModule { }

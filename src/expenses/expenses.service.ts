@@ -1,43 +1,62 @@
-import { Inject, Injectable, NotImplementedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
-import { EXPENSES_REPOSITORY, ExpensesRepository } from './repository/expenses.repository';
+import { EXPENSES_REPOSITORY, ExpensesRepository } from './repository/expenses.repository.interface';
 import { Expense } from './entities/expense.entity';
+import { UsersService } from '../users/users.service';
+import { User } from 'src/users/entities/user.entity';
+import { UpdateExpenseDto } from './dto/update-expense.dto';
 
 @Injectable()
 export class ExpensesService {
-    constructor(@Inject(EXPENSES_REPOSITORY) private readonly _expensesRepository: ExpensesRepository) { }
+    constructor(
+        @Inject(EXPENSES_REPOSITORY) private readonly _expensesRepository: ExpensesRepository,
+        private readonly _usersService: UsersService
+    ) { }
 
     createExpense = async (createExpenseDto: CreateExpenseDto): Promise<Expense> => {
-        return await this._expensesRepository.createExpense(createExpenseDto);
+        const { idUser } = createExpenseDto;
+
+        const user: User = await this._usersService.findById(idUser);
+        if (!user)
+            throw new BadRequestException("Invalid User ID.");
+
+        const expense: Expense = await this._expensesRepository.createExpense(createExpenseDto);
+        if (!expense)
+            throw new InternalServerErrorException("An error occurred while trying to create the expense.");
+
+        return expense;
     }
 
-    deleteById = async (expenseId: string): Promise<Expense> => {
-        throw new NotImplementedException();
-        // const deletedExpense = await this.expenseModel.findByIdAndDelete(expenseId);
-        // return deletedExpense;
+    deleteById = async (idExpense: string): Promise<Expense> => {
+        const deletedExpense = await this._expensesRepository.deleteExpenseById(idExpense);
+        if (!deletedExpense)
+            throw new BadRequestException("Expense not found.");
+
+        return deletedExpense;
     }
 
-    findAll = async (): Promise<Expense[]> => {
-        throw new NotImplementedException();
+    findById = async (idExpense: string): Promise<Expense> => {
+        const expense = await this._expensesRepository.findExpenseById(idExpense);
+        if (!expense)
+            throw new BadRequestException("Expense not found.");
 
-        // return await this.expenseModel.find();
-    }
-
-    findById = async (expenseId: string): Promise<Expense> => {
-        throw new NotImplementedException();
-
-        // const expense = await this.expenseModel.findById(expenseId);
-        // return expense;
+        return expense;
     }
 
     findUserExpenses = async (idUser: string): Promise<Expense[]> => {
-        return await this._expensesRepository.findUserExpenses(idUser);
+        const user: User = await this._usersService.findById(idUser);
+        if (!user)
+            throw new BadRequestException("Invalid User ID.");
+
+        const expenses: Expense[] = await this._expensesRepository.findUserExpenses(idUser);
+        return expenses;
     }
 
-    udpate = async (expenseId: string, expense: CreateExpenseDto): Promise<Expense> => {
-        throw new NotImplementedException();
+    updateExpense = async (idExpense: string, expense: UpdateExpenseDto): Promise<Expense> => {
+        const updatedExpense = await this._expensesRepository.updateExpense(idExpense, expense);
+        if (!updatedExpense)
+            throw new BadRequestException("Invalid Expense ID.");
 
-        // const updatedExpense = await this.expenseModel.findByIdAndUpdate(expenseId, expense, { new: true });
-        // return updatedExpense;
+        return updatedExpense;
     }
 }

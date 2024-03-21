@@ -7,6 +7,7 @@ export const USERS_REPOSITORY = 'UsersRepository';
 export interface UsersRepository {
     createUser(createUserDto: CreateUserRequestDto): Promise<User>;
     findAll(): Promise<User[]>;
+    findById(id: string): Promise<User>;
     login(loginUserDto: LoginUserRequestDto): Promise<User>;
     deleteUserById(id: string): Promise<User>;
 }

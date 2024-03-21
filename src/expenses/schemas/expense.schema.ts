@@ -4,6 +4,9 @@ import mongoose, { Model } from "mongoose";
 @Schema()
 class Expense {
     @Prop({ required: true })
+    idUser: string;
+    
+    @Prop({ required: true })
     description: string;
 
     @Prop({ required: true })
