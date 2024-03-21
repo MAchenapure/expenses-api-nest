@@ -27,7 +27,6 @@ describe('AuthController (e2e)', () => {
                 })
                 .expect(201)
 
-            expect(response.body.code).toEqual(0);
             expect(response.body.auth).toBeDefined();
             expect(response.body.auth.access_token).toBeDefined();
 
@@ -36,21 +35,19 @@ describe('AuthController (e2e)', () => {
     })
 
     describe('Create authentication user (POST) /auth/create', () => {
-        it('should return 201 but response.code = 1 when already exists an user with that email.', async () => {
-            const response = await request(app.getHttpServer())
+        it('should return 400 when already exists an user with that email.', async () => {
+            return await request(app.getHttpServer())
                 .post(AUTH_URL + '/create')
                 .auth(authToken, { type: 'bearer' })
                 .send({
                     username: "admin",
                     password: "admin1234"
                 })
-                .expect(201)
-
-            expect(response.body.code).toEqual(1);
+                .expect(400)
         })
 
         it('should return 401 when auth token is not provided.', async () => {
-            const response = await request(app.getHttpServer())
+            return await request(app.getHttpServer())
             .post(AUTH_URL + '/create')
             .send({
                 username: "admin",

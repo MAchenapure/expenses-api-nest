@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { CreateAuthUserRequestDto } from '../auth/dto/create.auth.user.request.dto';
 import { AuthUser } from '../auth/entities/auth.user';
 import { AUTH_USERS_REPOSITORY, AuthUsersRepository } from './repository/auth.users.repository.interface';
@@ -14,15 +14,13 @@ export class AuthService {
     ) { }
 
     async authenticate(authenticateDto: AuthenticateRequestDto): Promise<{ access_token: string }> {
-        const dbAuthUser = await this._findAuthUserByUsername(authenticateDto.username);
-
+        const dbAuthUser = await this._authUserRepository.findAuthUserByUsername(authenticateDto.username);
         if (!dbAuthUser)
-            return null;
+            throw new BadRequestException("Authentication failed.");
 
-        const passValidation = await compare(authenticateDto.password, dbAuthUser.password);
-
-        if(!passValidation)
-            return null;
+        const passComparison = await compare(authenticateDto.password, dbAuthUser.password);
+        if (!passComparison)
+            throw new BadRequestException("Authentication failed.");
 
         const payload = { sub: dbAuthUser.id, username: dbAuthUser.username };
         return {
@@ -34,9 +32,5 @@ export class AuthService {
         const password = await hash(createAuthUserDto.password);
         createAuthUserDto.password = password;
         return await this._authUserRepository.createAuthUser(createAuthUserDto);
-    }
-
-    private async _findAuthUserByUsername(username: string): Promise<AuthUser> {
-        return await this._authUserRepository.findAuthUserByUsername(username);
     }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { AuthUsersRepository } from "./auth.users.repository.interface";
 import { AuthUser } from "../entities/auth.user";
 import { InjectModel } from "@nestjs/mongoose";
@@ -11,23 +11,22 @@ export class MongoAuthUsersRepository implements AuthUsersRepository {
 
     async createAuthUser(createAuthUserDto: CreateAuthUserRequestDto): Promise<AuthUser> {
         let authUser = await this.findAuthUserByUsername(createAuthUserDto.username);
-
-        // returns null if an user with that username already exists in the database.
         if (authUser)
-            return null;
+            throw new BadRequestException("AuthUser already exists.");
 
         authUser = await new this._authUserModel(createAuthUserDto).save();
+        if(!authUser)
+            throw new InternalServerErrorException("An error ocurred while trying to create a new auth user.")
+        
         return authUser;
     }
 
     async findAuthUserByUsername(username: string): Promise<AuthUser> {
         const authUser = await this._authUserModel.findOne({ username: username });
-
-        if (authUser)
-            return this._mapRawAuthUserToAuthUser(authUser);
-        else
+        if (!authUser)
             return null;
 
+        return this._mapRawAuthUserToAuthUser(authUser);
     }
 
     private _mapRawAuthUserToAuthUser(rawAuthUser: AuthUserDocument) {
