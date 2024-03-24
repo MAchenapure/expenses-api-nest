@@ -53,7 +53,7 @@ export class ExpensesController {
     }
 
     @Delete('/delete/:id')
-    async deleteById(@Param('id') id: string) {
+    async deleteById(@Param('id') id: string): Promise<ExpenseResponseDto> {
         try {
             const deletedExpense = await this._expensesService.deleteById(id);
 
@@ -68,7 +68,7 @@ export class ExpensesController {
     }
 
     @Put('/update/:id')
-    async update(@Body() expense: UpdateExpenseDto, @Param('id') idExpense) {
+    async update(@Body() expense: UpdateExpenseDto, @Param('id') idExpense): Promise<ExpenseResponseDto> {
         try {
             const updatedExpense = await this._expensesService.updateExpense(idExpense, expense);
 

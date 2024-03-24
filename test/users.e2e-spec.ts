@@ -2,26 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { getAuthToken } from './get-auth-token';
 
 describe('UsersController (e2e)', () => {
     let app: INestApplication;
     const USERS_URL = '/users'
     let authToken = '';
     let idUser = '';
-
-    const getAuthToken = async () => {
-        try {
-            const AUTH_URL = '/auth';
-            const response = await request(app.getHttpServer())
-                .post(AUTH_URL)
-                .send({
-                    username: "admin",
-                    password: "admin1234"
-                })
-            return response.body.auth.access_token;
-        }
-        catch (err) { console.log(err) }
-    }
 
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -31,7 +18,7 @@ describe('UsersController (e2e)', () => {
         app = moduleFixture.createNestApplication();
         await app.init();
 
-        authToken = await getAuthToken();
+        authToken = await getAuthToken(app);
     });
 
     describe('Creating new users (POST) /users/create', () => {
