@@ -16,6 +16,15 @@ class Expense {
     date: Date;
 
     @Prop({ required: true })
+    day: number;
+
+    @Prop({ required: true })
+    month: number;
+
+    @Prop({ required: true })
+    year: number;
+
+    @Prop({ required: true })
     category: string;
 
     @Prop({ required: true, type: Date, default: Date.now() })

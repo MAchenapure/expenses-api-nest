@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { ExpensesRepository } from "./expenses.repository.interface";
-import { CreateExpenseDto } from "../dto/create-expense.dto";
 import { Expense } from "../entities/expense.entity";
 import { InjectModel } from "@nestjs/mongoose";
 import { ExpenseDocument, ExpenseModel } from "../schemas/expense.schema";
@@ -11,8 +10,8 @@ import { UpdateExpenseDto } from "../dto/update-expense.dto";
 export class MongoExpensesRepository implements ExpensesRepository {
     constructor(@InjectModel(Expense.name) private readonly _expensesModel: ExpenseModel) { }
 
-    async createExpense({ ...createExpenseDto }: CreateExpenseDto): Promise<Expense> {
-        const newExpense = await new this._expensesModel(createExpenseDto).save();
+    async createExpense(expense: Expense): Promise<Expense> {
+        const newExpense = await new this._expensesModel(expense).save();
         return this._mapRawExpenseToExpense(newExpense);
     }
 
@@ -53,15 +52,9 @@ export class MongoExpensesRepository implements ExpensesRepository {
     }
 
     private _mapRawExpenseToExpense(rawExpense: ExpenseDocument): Expense {
-        const expense = new Expense();
+        const { idUser, description, value, date, day, month, year, category, id, createdAt } = rawExpense;
 
-        expense.id = rawExpense.id;
-        expense.description = rawExpense.description;
-        expense.value = rawExpense.value;
-        expense.date = rawExpense.date;
-        expense.category = rawExpense.category;
-        expense.createdAt = rawExpense.createdAt;
-        expense.idUser = rawExpense.idUser;
+        const expense = new Expense(idUser, description, value, date, day, month, year, category, id, createdAt);
 
         return expense;
     }

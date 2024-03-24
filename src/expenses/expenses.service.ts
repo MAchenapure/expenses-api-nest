@@ -14,13 +14,19 @@ export class ExpensesService {
     ) { }
 
     createExpense = async (createExpenseDto: CreateExpenseDto): Promise<Expense> => {
-        const { idUser } = createExpenseDto;
+        const { idUser, description, value, date, category } = createExpenseDto;
 
         const user: User = await this._usersService.findById(idUser);
         if (!user)
             throw new BadRequestException("Invalid User ID.");
 
-        const expense: Expense = await this._expensesRepository.createExpense(createExpenseDto);
+        const expenseDate = new Date(createExpenseDto.date);
+        const day = expenseDate.getUTCDate();
+        const month = expenseDate.getUTCMonth() + 1;
+        const year = expenseDate.getUTCFullYear();
+
+        const expense: Expense = await this._expensesRepository.createExpense(new Expense(idUser, description, value, date, day, month, year, category));
+
         if (!expense)
             throw new InternalServerErrorException("An error occurred while trying to create the expense.");
 
