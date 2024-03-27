@@ -20,10 +20,7 @@ export class ExpensesService {
         if (!user)
             throw new BadRequestException("Invalid User ID.");
 
-        const expenseDate = new Date(createExpenseDto.date);
-        const day = expenseDate.getUTCDate();
-        const month = expenseDate.getUTCMonth() + 1;
-        const year = expenseDate.getUTCFullYear();
+        const { day, month, year } = this._extractDateDetails(createExpenseDto.date);
 
         const expense: Expense = await this._expensesRepository.createExpense(new Expense(idUser, description, value, date, day, month, year, category));
 
@@ -59,10 +56,22 @@ export class ExpensesService {
     }
 
     updateExpense = async (idExpense: string, expense: UpdateExpenseDto): Promise<Expense> => {
-        const updatedExpense = await this._expensesRepository.updateExpense(idExpense, expense);
+        const { idUser, description, value, date, category } = expense;
+        const { day, month, year } = this._extractDateDetails(expense.date);
+        
+        const updatedExpense = await this._expensesRepository.updateExpense(new Expense(idUser, description, value, date, day, month, year, category, idExpense));
         if (!updatedExpense)
             throw new BadRequestException("Invalid Expense ID.");
 
         return updatedExpense;
+    }
+
+    private _extractDateDetails = (date: Date): { day: number, month: number, year: number } => {
+        date = new Date(date);
+        const day = date.getUTCDate();
+        const month = date.getUTCMonth() + 1;
+        const year = date.getUTCFullYear();
+
+        return { day, month, year };
     }
 }

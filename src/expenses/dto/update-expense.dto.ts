@@ -4,6 +4,10 @@ import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLeng
 export class UpdateExpenseDto {
     @IsNotEmpty()
     @IsString()
+    readonly idUser: string;
+    
+    @IsNotEmpty()
+    @IsString()
     @MaxLength(150)
     readonly description: string;
 

@@ -14,7 +14,7 @@ export class ExpensesController {
             const expenseCreated = await this._expensesService.createExpense(createExpenseDto);
             return {
                 message: 'Expense successfully registered.',
-                expense: expenseCreated
+                expenses: expenseCreated
             }
         }
         catch (err) {
@@ -29,7 +29,7 @@ export class ExpensesController {
 
             return {
                 message: 'Query successfully executed.',
-                expense: expenses
+                expenses: expenses
             }
         }
         catch (err) {
@@ -44,7 +44,7 @@ export class ExpensesController {
 
             return {
                 message: 'Query successfully executed.',
-                expense: expense
+                expenses: expense
             }
         }
         catch (err) {
@@ -59,7 +59,7 @@ export class ExpensesController {
 
             return {
                 message: 'Expense successfully deleted.',
-                expense: deletedExpense
+                expenses: deletedExpense
             };
         }
         catch (err) {
@@ -74,7 +74,7 @@ export class ExpensesController {
 
             return {
                 message: 'Expense successfully updated.',
-                expense: updatedExpense
+                expenses: updatedExpense
             }
         }
         catch (err) {

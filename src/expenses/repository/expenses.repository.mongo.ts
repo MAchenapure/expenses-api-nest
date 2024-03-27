@@ -4,7 +4,6 @@ import { Expense } from "../entities/expense.entity";
 import { InjectModel } from "@nestjs/mongoose";
 import { ExpenseDocument, ExpenseModel } from "../schemas/expense.schema";
 import mongoose from "mongoose";
-import { UpdateExpenseDto } from "../dto/update-expense.dto";
 
 @Injectable()
 export class MongoExpensesRepository implements ExpensesRepository {
@@ -42,9 +41,18 @@ export class MongoExpensesRepository implements ExpensesRepository {
         return formattedExpenses;
     }
 
-    async updateExpense(id: string, expense: UpdateExpenseDto): Promise<Expense> {
-        this._validateMongoId(id);
-        const updatedExpense = await this._expensesModel.findByIdAndUpdate(id, expense, { new: true });
+    async updateExpense(expense: Expense): Promise<Expense> {
+        this._validateMongoId(expense.id);
+        this._validateMongoId(expense.idUser);
+
+        const originalExpense = await this.findExpenseById(expense.id);
+        if (!originalExpense)
+            return null;
+
+        if (originalExpense.idUser != expense.idUser)
+            throw new BadRequestException("Invalid User ID.");
+
+        const updatedExpense = await this._expensesModel.findByIdAndUpdate(expense.id, expense, { new: true });
         if (!updatedExpense)
             return null;
 

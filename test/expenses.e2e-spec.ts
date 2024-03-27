@@ -49,8 +49,8 @@ describe('AuthController (e2e)', () => {
                 })
                 .expect(201)
 
-            expect(response.body.expense).toBeDefined();
-            idExpense = response.body.expense.id;
+            expect(response.body.expenses).toBeDefined();
+            idExpense = response.body.expenses.id;
         })
 
         it('should return 400 when sending an non-existent User ID.', async () => {
@@ -83,7 +83,7 @@ describe('AuthController (e2e)', () => {
                 .auth(authToken, { type: 'bearer' })
                 .expect(200)
 
-            expect(response.body.expense).toBeDefined();
+            expect(response.body.expenses).toBeDefined();
         })
 
         it('should return 400 when sending an non-existent Expense ID.', async () => {
@@ -108,6 +108,7 @@ describe('AuthController (e2e)', () => {
                 .put(`${UPDATE_EXPENSES_URL}/${idExpense}`)
                 .auth(authToken, { type: 'bearer' })
                 .send({
+                    idUser: USER_ID,
                     description: 'Testing expenses update.',
                     value: 111111,
                     date: Date.now(),
@@ -115,7 +116,7 @@ describe('AuthController (e2e)', () => {
                 })
                 .expect(200)
 
-            expect(response.body.expense).toBeDefined();
+            expect(response.body.expenses).toBeDefined();
         })
 
         it('should return 400 when sending an non-existent Expense ID.', async () => {
@@ -123,6 +124,21 @@ describe('AuthController (e2e)', () => {
                 .put(`${UPDATE_EXPENSES_URL}/000000000000000000000000`)
                 .auth(authToken, { type: 'bearer' })
                 .send({
+                    idUser: USER_ID,
+                    description: 'Testing expenses update.',
+                    value: 111111,
+                    date: Date.now(),
+                    category: 'Test'
+                })
+                .expect(400)
+        })
+
+        it('should return 400 when sending an non-existent User ID.', async () => {
+            return await request(app.getHttpServer())
+                .put(`${UPDATE_EXPENSES_URL}/${idExpense}`)
+                .auth(authToken, { type: 'bearer' })
+                .send({
+                    idUser: '65fc940bc7627b24e496839e',
                     description: 'Testing expenses update.',
                     value: 111111,
                     date: Date.now(),
@@ -147,7 +163,7 @@ describe('AuthController (e2e)', () => {
                 .auth(authToken, { type: 'bearer' })
                 .expect(200)
 
-            expect(response.body.expense).toBeDefined();
+            expect(response.body.expenses).toBeDefined();
         })
 
         it('should return 400 when sending an non-existent Expense ID.', async () => {
@@ -173,7 +189,7 @@ describe('AuthController (e2e)', () => {
                 .auth(authToken, { type: 'bearer' })
                 .expect(200)
 
-            expect(response.body.expense).toBeDefined();
+            expect(response.body.expenses).toBeDefined();
         })
 
         it('should return 400 when sending an non-existent User ID.', async () => {
