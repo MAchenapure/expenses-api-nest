@@ -32,8 +32,19 @@ export class MongoExpensesRepository implements ExpensesRepository {
         return this._mapRawExpenseToExpense(expense);
     }
 
-    async findUserExpenses(idUser: string): Promise<Expense[]> {
-        const expenses = await this._expensesModel.find({ idUser: idUser });
+    async findUserExpenses(idUser: string, filter: { day?: number, month?: number, year?: number }): Promise<Expense[]> {
+        let query: any = { idUser: idUser };
+
+        if (filter.day !== undefined) {
+            query.day = filter.day;
+            query.month = filter.month;
+            query.year = filter.year;
+        } else if (filter.day === undefined && filter.month !== undefined) {
+            query.month = filter.month;
+            query.year = filter.year;
+        }
+
+        const expenses = await this._expensesModel.find(query);
         if (!expenses)
             return null;
 

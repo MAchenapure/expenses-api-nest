@@ -8,7 +8,7 @@ export interface ExpensesRepository {
     createExpense(expense: Expense): Promise<Expense>;
     deleteExpenseById(id: string): Promise<Expense>;
     findExpenseById(id: string): Promise<Expense>;
-    findUserExpenses(idUser: string): Promise<Expense[]>;
+    findUserExpenses(idUser: string, filter: { day?: number, month?: number, year?: number }): Promise<Expense[]>;
     updateExpense(expense: Expense): Promise<Expense>;
 }
 

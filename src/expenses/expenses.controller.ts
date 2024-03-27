@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { ExpensesService } from './expenses.service';
 import { ExpenseResponseDto } from './dto/expense.response.dto';
@@ -23,9 +23,16 @@ export class ExpensesController {
     }
 
     @Get('/user/:id')
-    async getUserExpenses(@Param('id') idUser: string): Promise<ExpenseResponseDto> {
+    async getUserExpenses(@Param('id') idUser: string, @Body() filter: { day?: number, month?: number, year?: number }): Promise<ExpenseResponseDto> {
+        
+        if (filter.day !== undefined && (filter.month === undefined || filter.year === undefined)) {
+            throw new BadRequestException("Error in date filters.");
+        } else if (filter.month !== undefined && filter.year === undefined) {
+            throw new BadRequestException("Error in date filters.");
+        }
+
         try {
-            const expenses = await this._expensesService.findUserExpenses(idUser);
+            const expenses = await this._expensesService.findUserExpenses(idUser, filter);
 
             return {
                 message: 'Query successfully executed.',

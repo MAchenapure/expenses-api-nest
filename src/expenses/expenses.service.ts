@@ -46,19 +46,19 @@ export class ExpensesService {
         return expense;
     }
 
-    findUserExpenses = async (idUser: string): Promise<Expense[]> => {
+    findUserExpenses = async (idUser: string, filter: { day?: number, month?: number, year?: number }): Promise<Expense[]> => {
         const user: User = await this._usersService.findById(idUser);
         if (!user)
             throw new BadRequestException("Invalid User ID.");
 
-        const expenses: Expense[] = await this._expensesRepository.findUserExpenses(idUser);
+        const expenses: Expense[] = await this._expensesRepository.findUserExpenses(idUser, filter);
         return expenses;
     }
 
     updateExpense = async (idExpense: string, expense: UpdateExpenseDto): Promise<Expense> => {
         const { idUser, description, value, date, category } = expense;
         const { day, month, year } = this._extractDateDetails(expense.date);
-        
+
         const updatedExpense = await this._expensesRepository.updateExpense(new Expense(idUser, description, value, date, day, month, year, category, idExpense));
         if (!updatedExpense)
             throw new BadRequestException("Invalid Expense ID.");

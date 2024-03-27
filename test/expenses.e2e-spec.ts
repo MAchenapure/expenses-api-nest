@@ -183,7 +183,14 @@ describe('AuthController (e2e)', () => {
                 .expect(401)
         })
 
-        it('should return the expense and code 200.', async () => {
+        it('should return 400 when sending an non-existent User ID.', async () => {
+            return await request(app.getHttpServer())
+                .get(`${GET_USER_EXPENSES_URL}/000000000000000000000000`)
+                .auth(authToken, { type: 'bearer' })
+                .expect(400)
+        })
+
+        it("should return all user's expenses and code 200.", async () => {
             const response = await request(app.getHttpServer())
                 .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
                 .auth(authToken, { type: 'bearer' })
@@ -192,10 +199,59 @@ describe('AuthController (e2e)', () => {
             expect(response.body.expenses).toBeDefined();
         })
 
-        it('should return 400 when sending an non-existent User ID.', async () => {
-            return await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/000000000000000000000000`)
+        it("should return all user's expenses filtered by month and year.", async () => {
+            const response = await request(app.getHttpServer())
+                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
                 .auth(authToken, { type: 'bearer' })
+                .send({
+                    'month': 3,
+                    'year': 2024
+                })
+                .expect(200)
+
+            expect(response.body.expenses).toBeDefined();
+            response.body.expenses.map(expense => {
+                expect(expense.month).toEqual(3)
+                expect(expense.year).toEqual(2024)
+            });
+        })
+
+        it("should return all user's expenses filtered by day, month and year.", async () => {
+            const response = await request(app.getHttpServer())
+                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .auth(authToken, { type: 'bearer' })
+                .send({
+                    'day': 24,
+                    'month': 3,
+                    'year': 2024
+                })
+                .expect(200)
+
+            expect(response.body.expenses).toBeDefined();
+            response.body.expenses.map(expense => {
+                expect(expense.day).toEqual(24)
+                expect(expense.month).toEqual(3)
+                expect(expense.year).toEqual(2024)
+            });
+        })
+
+        it("should return 400 when sending day filter parameter but not month and year.", async () => {
+            const response = await request(app.getHttpServer())
+                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .auth(authToken, { type: 'bearer' })
+                .send({
+                    'day': 24
+                })
+                .expect(400)
+        })
+
+        it("should return 400 when sending month filter parameter but year.", async () => {
+            const response = await request(app.getHttpServer())
+                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .auth(authToken, { type: 'bearer' })
+                .send({
+                    'month': 3
+                })
                 .expect(400)
         })
     })
