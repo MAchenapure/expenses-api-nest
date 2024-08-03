@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, Delete, InternalServerErrorException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserRequestDto } from './dto/create.user.request.dto';
 import { LoginUserRequestDto } from './dto/login.user.request.dto';

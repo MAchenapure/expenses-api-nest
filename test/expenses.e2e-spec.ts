@@ -174,40 +174,40 @@ describe('AuthController (e2e)', () => {
         })
     })
 
-    describe("Getting all user's expenses (GET) /expenses/user ", () => {
+    describe("Getting all user's expenses (POST) /expenses/user ", () => {
         const GET_USER_EXPENSES_URL = `${EXPENSES_URL}/user`;
 
         it('should return 401 when auth token is not provided.', async () => {
             return await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/${idExpense}`)
+                .post(`${GET_USER_EXPENSES_URL}/${idExpense}`)
                 .expect(401)
         })
 
         it('should return 400 when sending an non-existent User ID.', async () => {
             return await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/000000000000000000000000`)
+                .post(`${GET_USER_EXPENSES_URL}/000000000000000000000000`)
                 .auth(authToken, { type: 'bearer' })
                 .expect(400)
         })
 
         it("should return all user's expenses and code 200.", async () => {
             const response = await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .post(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
                 .auth(authToken, { type: 'bearer' })
-                .expect(200)
+                .expect(201)
 
             expect(response.body.expenses).toBeDefined();
         })
 
         it("should return all user's expenses filtered by month and year.", async () => {
             const response = await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .post(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
                 .auth(authToken, { type: 'bearer' })
                 .send({
                     'month': 3,
                     'year': 2024
                 })
-                .expect(200)
+                .expect(201)
 
             expect(response.body.expenses).toBeDefined();
             response.body.expenses.map(expense => {
@@ -218,14 +218,14 @@ describe('AuthController (e2e)', () => {
 
         it("should return all user's expenses filtered by day, month and year.", async () => {
             const response = await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .post(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
                 .auth(authToken, { type: 'bearer' })
                 .send({
                     'day': 24,
                     'month': 3,
                     'year': 2024
                 })
-                .expect(200)
+                .expect(201)
 
             expect(response.body.expenses).toBeDefined();
             response.body.expenses.map(expense => {
@@ -237,7 +237,7 @@ describe('AuthController (e2e)', () => {
 
         it("should return 400 when sending day filter parameter but not month and year.", async () => {
             const response = await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .post(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
                 .auth(authToken, { type: 'bearer' })
                 .send({
                     'day': 24
@@ -247,7 +247,7 @@ describe('AuthController (e2e)', () => {
 
         it("should return 400 when sending month filter parameter but year.", async () => {
             const response = await request(app.getHttpServer())
-                .get(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
+                .post(`${GET_USER_EXPENSES_URL}/${USER_ID}`)
                 .auth(authToken, { type: 'bearer' })
                 .send({
                     'month': 3

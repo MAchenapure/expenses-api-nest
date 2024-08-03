@@ -13,6 +13,7 @@ export class CreateExpenseDto {
     
     @IsNotEmpty()
     @IsNumber()
+    @Type(() => Number)
     @IsPositive()
     readonly value: number;
 

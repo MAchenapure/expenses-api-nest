@@ -22,7 +22,7 @@ export class ExpensesController {
         }
     }
 
-    @Get('/user/:id')
+    @Post('/user/:id')
     async getUserExpenses(@Param('id') idUser: string, @Body() filter: { day?: number, month?: number, year?: number }): Promise<ExpenseResponseDto> {
         
         if (filter.day !== undefined && (filter.month === undefined || filter.year === undefined)) {

@@ -14,7 +14,7 @@ export class MongoUsersRepository implements UsersRepository {
     async createUser(createUserDto: CreateUserRequestDto): Promise<User> {
         let user = await this._userModel.findOne({ email: createUserDto.email });
         if (user)
-            throw new BadRequestException("There is already a registered user with that email address.");
+            throw new BadRequestException("There is already registered an user with that email address.");
 
         user = await new this._userModel(createUserDto).save();
         if (!user)
